@@ -41,45 +41,32 @@
 
     .header-glow {
       position: fixed;
-      top: -120px;
-      left: 50%;
+      top: -120px; left: 50%;
       transform: translateX(-50%);
-      width: 600px;
-      height: 300px;
+      width: 600px; height: 300px;
       background: radial-gradient(ellipse, rgba(245,230,66,0.15) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
 
     header {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 480px;
+      position: relative; z-index: 1;
+      width: 100%; max-width: 480px;
       padding: 48px 24px 0;
       text-align: center;
     }
 
     .logo-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      display: inline-flex; align-items: center; gap: 8px;
       background: rgba(245,230,66,0.1);
       border: 1px solid rgba(245,230,66,0.25);
       color: var(--accent);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      padding: 6px 14px;
-      border-radius: 100px;
-      margin-bottom: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 100px; margin-bottom: 20px;
     }
 
     .logo-tag .dot {
-      width: 6px; height: 6px;
-      background: var(--accent);
-      border-radius: 50%;
+      width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
       animation: pulse 2s infinite;
     }
 
@@ -90,125 +77,90 @@
 
     h1 {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(32px, 8vw, 48px);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
+      font-size: clamp(32px, 8vw, 48px); font-weight: 800;
+      line-height: 1.05; letter-spacing: -0.02em;
     }
-
     h1 span { color: var(--accent); }
 
-    .subtitle {
-      margin-top: 10px;
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .subtitle { margin-top: 10px; font-size: 15px; color: var(--muted); line-height: 1.6; }
 
     .content {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 480px;
+      position: relative; z-index: 1;
+      width: 100%; max-width: 480px;
       padding: 32px 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      display: flex; flex-direction: column; gap: 16px;
     }
 
+    /* ── TABS ── */
     .tabs {
       display: flex;
       background: var(--surface);
-      border-radius: 14px;
-      padding: 4px;
-      gap: 4px;
+      border-radius: 14px; padding: 4px; gap: 4px;
       border: 1px solid rgba(255,255,255,0.06);
     }
 
     .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
+      flex: 1; padding: 10px; border: none;
+      background: transparent; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      border-radius: 10px; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
-      background: var(--card);
-      color: var(--text);
+      background: var(--card); color: var(--text);
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
+    /* ── PHOTO CARD ── */
     .photo-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      overflow: hidden;
+      background: var(--card); border-radius: var(--radius); overflow: hidden;
       border: 1px solid rgba(255,255,255,0.07);
       box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       position: relative;
     }
 
-    .photo-card img {
-      width: 100%;
-      display: block;
-      object-fit: contain;
-      background: #111;
+    .photo-card img, .photo-card video {
+      width: 100%; display: block;
+      object-fit: contain; background: #111;
       max-height: 60vh;
     }
 
     .raw-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 3px;
-      background: #111;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 3px; background: #111;
     }
 
     .raw-grid img {
-      width: 100%;
-      aspect-ratio: 4/3;
-      object-fit: cover;
-      display: block;
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover; display: block; max-height: unset;
     }
 
     .corner-label {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      color: var(--text);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 5px 10px;
-      border-radius: 100px;
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      color: var(--text); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 10px; border-radius: 100px;
       border: 1px solid rgba(255,255,255,0.1);
     }
 
+    /* ── GIF badge ── */
+    .gif-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--accent); color: #0d0d0d;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
+      padding: 4px 10px; border-radius: 100px;
+    }
+
+    /* ── BUTTONS ── */
     .btn-download {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 18px 24px;
-      background: var(--accent);
-      color: #0d0d0d;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'Syne', sans-serif;
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 18px 24px;
+      background: var(--accent); color: #0d0d0d;
+      border: none; border-radius: var(--radius);
+      font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800;
+      letter-spacing: -0.01em; cursor: pointer; transition: all 0.2s;
       text-decoration: none;
     }
 
@@ -216,40 +168,24 @@
     .btn-download:active { transform: translateY(0); }
 
     .btn-secondary {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 16px 24px;
-      background: transparent;
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px 24px;
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(255,255,255,0.14); border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
     }
 
     .btn-secondary:hover { background: rgba(255,255,255,0.06); }
 
+    /* ── TOAST ── */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 100px;
-      padding: 12px 24px;
-      font-size: 14px;
-      font-weight: 500;
-      white-space: nowrap;
-      z-index: 100;
+      background: var(--card); color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 100px;
+      padding: 12px 24px; font-size: 14px; font-weight: 500;
+      white-space: nowrap; z-index: 100;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
@@ -257,25 +193,18 @@
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.success { border-color: rgba(245,230,66,0.4); color: var(--accent); }
 
+    /* ── STATES ── */
     .state-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 40px 24px;
-      text-align: center;
-      gap: 16px;
-      position: relative;
-      z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 40px 24px; text-align: center; gap: 16px;
+      position: relative; z-index: 1;
     }
 
     .spinner {
       width: 48px; height: 48px;
       border: 3px solid rgba(245,230,66,0.15);
       border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -284,13 +213,9 @@
     .state-box p { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 280px; }
 
     footer {
-      position: relative;
-      z-index: 1;
-      margin-top: 40px;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255,255,255,0.2);
-      letter-spacing: 0.05em;
+      position: relative; z-index: 1;
+      margin-top: 40px; text-align: center;
+      font-size: 12px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em;
     }
 
     .hidden { display: none !important; }
@@ -339,17 +264,24 @@
 
   <div class="content">
 
+    <!-- TABS -->
     <div class="tabs animate-up" id="tabsEl">
       <button class="tab-btn active" onclick="switchTab('frame')">📸 Frame</button>
-      <button class="tab-btn" onclick="switchTab('raw')" id="tabRawBtn">🖼 Asli</button>
+      <button class="tab-btn hidden" onclick="switchTab('raw')"   id="tabRaw">🖼 Asli</button>
+      <button class="tab-btn hidden" onclick="switchTab('gif')"   id="tabGif">🎞 GIF</button>
     </div>
 
+    <!-- PHOTO DISPLAY -->
     <div class="photo-card animate-up">
       <div class="corner-label" id="cornerLabel">Frame</div>
-      <img id="frameImg" src="" alt="Foto frame">
-      <div class="raw-grid hidden" id="rawGrid"></div>
+      <div class="gif-badge hidden" id="gifBadge">GIF</div>
+
+      <img     id="frameImg" src="" alt="Foto frame">
+      <div     id="rawGrid" class="raw-grid hidden"></div>
+      <video   id="gifVideo" class="hidden" autoplay loop muted playsinline></video>
     </div>
 
+    <!-- DOWNLOAD BUTTON -->
     <button id="btnDownload" class="btn-download animate-up">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
@@ -359,6 +291,7 @@
       Simpan Foto ke HP
     </button>
 
+    <!-- SHARE BUTTON -->
     <button class="btn-secondary animate-up" onclick="sharePhoto()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
@@ -376,24 +309,26 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ── PARSE PARAMS ──
   const params    = new URLSearchParams(location.search);
   const frameUrl  = params.get('frame');
   const rawsParam = params.get('raws');
+  const gifUrl    = params.get('gif');
   const rawUrls   = rawsParam ? rawsParam.split('|').filter(Boolean) : [];
 
   let currentTab = 'frame';
   let initiated  = false;
 
+  // ── INIT ──
   window.addEventListener('load', () => {
     if (!frameUrl) { showError(); return; }
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload  = () => init();
-    img.onerror = () => init(); // show even if preload fails
+    img.onerror = () => init();
     img.src = frameUrl;
 
-    // fallback: show after 4s regardless
     setTimeout(() => init(), 4000);
   });
 
@@ -404,21 +339,28 @@
     document.getElementById('stateLoading').classList.add('hidden');
     document.getElementById('mainContent').classList.remove('hidden');
 
-    // frame tab
+    // Frame
     document.getElementById('frameImg').src = frameUrl;
 
-    // raw tab
+    // Raw photos
     if (rawUrls.length > 0) {
       const grid = document.getElementById('rawGrid');
       rawUrls.forEach((url, i) => {
         const img = document.createElement('img');
-        img.src = url;
-        img.crossOrigin = 'anonymous';
-        img.alt = `Foto asli ${i + 1}`;
+        img.src = url; img.crossOrigin = 'anonymous'; img.alt = `Foto asli ${i + 1}`;
         grid.appendChild(img);
       });
-    } else {
-      document.getElementById('tabRawBtn').classList.add('hidden');
+      document.getElementById('tabRaw').classList.remove('hidden');
+    }
+
+    // GIF
+    if (gifUrl) {
+      document.getElementById('gifVideo').src = gifUrl;
+      document.getElementById('tabGif').classList.remove('hidden');
+    }
+
+    // Sembunyikan tabs jika cuma frame saja
+    if (!rawUrls.length && !gifUrl) {
       document.getElementById('tabsEl').style.display = 'none';
     }
 
@@ -430,47 +372,71 @@
     document.getElementById('stateError').classList.remove('hidden');
   }
 
+  // ── SWITCH TAB ──
   function switchTab(tab) {
     if (currentTab === tab) return;
     currentTab = tab;
 
+    // Update active tab button
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.tab-btn:nth-child(${tab === 'frame' ? 1 : 2})`).classList.add('active');
+    const tabMap = { frame: 0, raw: 1, gif: 2 };
+    const allBtns = document.querySelectorAll('.tab-btn');
+    if (tab === 'frame') allBtns[0].classList.add('active');
+    if (tab === 'raw')   allBtns[1].classList.add('active');
+    if (tab === 'gif')   allBtns[2].classList.add('active');
 
     const frameImg = document.getElementById('frameImg');
     const rawGrid  = document.getElementById('rawGrid');
+    const gifVideo = document.getElementById('gifVideo');
     const label    = document.getElementById('cornerLabel');
+    const gifBadge = document.getElementById('gifBadge');
+
+    // Hide all
+    frameImg.classList.add('hidden');
+    rawGrid.classList.add('hidden');
+    gifVideo.classList.add('hidden');
+    gifBadge.classList.add('hidden');
 
     if (tab === 'frame') {
       frameImg.classList.remove('hidden');
-      rawGrid.classList.add('hidden');
       label.textContent = 'Frame';
-    } else {
-      frameImg.classList.add('hidden');
+    } else if (tab === 'raw') {
       rawGrid.classList.remove('hidden');
       label.textContent = 'Foto Asli';
+    } else if (tab === 'gif') {
+      gifVideo.classList.remove('hidden');
+      gifBadge.classList.remove('hidden');
+      gifVideo.play();
+      label.textContent = 'GIF / Boomerang';
     }
 
     setDownloadBtn(tab);
   }
 
+  // ── DOWNLOAD BUTTON ──
   function setDownloadBtn(tab) {
     const btn = document.getElementById('btnDownload');
-    const isRawMulti = tab === 'raw' && rawUrls.length > 1;
+    const isMultiRaw = tab === 'raw' && rawUrls.length > 1;
 
-    btn.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      ${isRawMulti ? `Simpan ${rawUrls.length} Foto Asli` : 'Simpan Foto ke HP'}
-    `;
+    const icon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>`;
+
+    let label = 'Simpan Foto ke HP';
+    if (isMultiRaw)    label = `Simpan ${rawUrls.length} Foto Asli`;
+    if (tab === 'gif') label = 'Simpan GIF / Boomerang';
+
+    btn.innerHTML = `${icon} ${label}`;
 
     btn.onclick = async () => {
       showToast('⏳ Mengunduh...', '');
       try {
-        if (isRawMulti) {
+        if (tab === 'gif' && gifUrl) {
+          await downloadFile(gifUrl, 'boomerang.webm');
+          showToast('✅ GIF tersimpan!', 'success');
+        } else if (isMultiRaw) {
           for (let i = 0; i < rawUrls.length; i++) {
             await downloadFile(rawUrls[i], `foto-asli-${i+1}.jpg`);
             await sleep(400);
@@ -484,13 +450,14 @@
           showToast('✅ Foto tersimpan!', 'success');
         }
       } catch (e) {
-        // fallback: open tab
-        window.open(tab === 'frame' ? frameUrl : (rawUrls[0] || frameUrl), '_blank');
-        showToast('Foto dibuka di tab baru', '');
+        const fallback = tab === 'gif' ? gifUrl : tab === 'raw' ? rawUrls[0] : frameUrl;
+        window.open(fallback, '_blank');
+        showToast('Dibuka di tab baru', '');
       }
     };
   }
 
+  // ── DOWNLOAD FILE ──
   async function downloadFile(url, filename) {
     const res  = await fetch(url);
     const blob = await res.blob();
@@ -502,14 +469,11 @@
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   }
 
+  // ── SHARE ──
   async function sharePhoto() {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: 'Foto Photobooth 📸',
-          text: 'Lihat foto photobooth aku!',
-          url: location.href
-        });
+        await navigator.share({ title: 'Foto Photobooth 📸', text: 'Lihat foto photobooth aku!', url: location.href });
       } catch(e) { /* cancelled */ }
     } else {
       try {
@@ -521,6 +485,7 @@
     }
   }
 
+  // ── TOAST ──
   function showToast(msg, type) {
     const t = document.getElementById('toast');
     t.textContent = msg;
