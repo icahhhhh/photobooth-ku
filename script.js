@@ -1153,7 +1153,7 @@ function setupResultScreen() {
             let downloadUrl = null;
 
             if (typeof window.uploadPhotoToFirebase === 'function') {
-                downloadUrl = await window.uploadPhotoToFirebase(S.frameResultUrl, S.eventShots);
+                downloadUrl = await window.uploadPhotoToFirebase(S.frameResultUrl, S.eventShots, S.gifVideoUrl);
             }
 
             if (!downloadUrl) {
