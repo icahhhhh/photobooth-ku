@@ -1135,30 +1135,50 @@ function generateSimulatedGIF(photos) {
 }
 
 function setupResultScreen() {
-    // 1. Siapkan QR Code Simulasi
-    // QR Code — menggunakan library offline (qrcode.min.js)
-    const uniqueId = Math.random().toString(36).substring(7);
-    const localUrl = `photobooth://hasil/${uniqueId}`;
+    // Sembunyikan QR dulu, tampilkan loading
     const qrImg = document.getElementById('qrCodeImg');
-    if (window.QRCode) {
-        // Pakai library qrcode.min.js (davidshimjs)
-        qrImg.src = '';
-        const tempDiv = document.createElement('div');
-        new QRCode(tempDiv, { text: localUrl, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
-        setTimeout(() => {
-            const canvas = tempDiv.querySelector('canvas');
-            if (canvas) qrImg.src = canvas.toDataURL('image/png');
-        }, 100);
-    } else {
-        // Fallback: sembunyikan QR jika library tidak ada
-        qrImg.src = '';
-        document.getElementById('qrSimContainer').style.display = 'none';
-    }
-    
+    const qrContainer = document.getElementById('qrSimContainer');
+    qrImg.src = '';
+    qrContainer.style.display = 'block';
+    qrContainer.querySelector('p').textContent = '⏳ Mengupload foto...';
+
     switchResultTab('frame');
     document.querySelectorAll('.kiosk-screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('kiosk-attract').classList.add('active'); 
-    document.getElementById('resultOverlay').classList.add('active'); 
+    document.getElementById('kiosk-attract').classList.add('active');
+    document.getElementById('resultOverlay').classList.add('active');
+
+    // Upload ke Firebase lalu generate QR dengan URL asli
+    (async () => {
+        try {
+            let downloadUrl = null;
+
+            if (typeof window.uploadPhotoToFirebase === 'function') {
+                downloadUrl = await window.uploadPhotoToFirebase(S.frameResultUrl, S.eventShots);
+            }
+
+            if (!downloadUrl) {
+                // Fallback jika upload gagal
+                qrContainer.querySelector('p').textContent = '⚠️ Upload gagal, QR tidak tersedia';
+                qrImg.src = '';
+                return;
+            }
+
+            // Generate QR dari URL download yang asli
+            qrContainer.querySelector('p').textContent = 'Scan untuk Download';
+            if (window.QRCode) {
+                const tempDiv = document.createElement('div');
+                new QRCode(tempDiv, { text: downloadUrl, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+                setTimeout(() => {
+                    const canvas = tempDiv.querySelector('canvas');
+                    if (canvas) qrImg.src = canvas.toDataURL('image/png');
+                }, 100);
+            }
+
+        } catch (err) {
+            console.error('[QR] Error:', err);
+            qrContainer.querySelector('p').textContent = '⚠️ Gagal generate QR';
+        }
+    })();
 }
 
 function switchResultTab(tabId) {
