@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download Foto Kamu 📸</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+      color: #111;
+    }
+    .logo { font-size: 40px; margin-bottom: 8px; }
+    .brand { font-size: 18px; font-weight: 700; color: #e91e8c; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 28px; text-align:center; }
+    .card {
+      background: white; border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      width: 100%; max-width: 420px; overflow: hidden;
+    }
+    .photo-wrap {
+      width: 100%; background: #eee;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 250px;
+    }
+    .photo-wrap img { width: 100%; display: block; object-fit: contain; }
+    .skeleton {
+      width: 100%; height: 300px;
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .card-body { padding: 24px; }
+    .photo-id { font-size: 11px; color: #ccc; margin-bottom: 16px; text-align:center; letter-spacing:1px; }
+    .tabs {
+      display: flex; gap: 8px; margin-bottom: 20px;
+      background: #f5f5f5; border-radius: 10px; padding: 4px;
+    }
+    .tab-btn {
+      flex: 1; padding: 8px; border: none; background: transparent;
+      border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; color: #888; transition: all .2s;
+    }
+    .tab-btn.active { background: white; color: #e91e8c; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .raw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .raw-grid img { width: 100%; border-radius: 8px; object-fit: cover; aspect-ratio: 1; }
+    .btn-download {
+      display: block; width: 100%;
+      background: #e91e8c; color: white;
+      border: none; border-radius: 14px;
+      padding: 16px; font-size: 16px; font-weight: 700;
+      cursor: pointer; text-align: center;
+      text-decoration: none; margin-top: 16px;
+      transition: opacity .2s;
+    }
+    .btn-download:active { opacity: 0.8; }
+    .btn-download.secondary {
+      background: transparent; color: #e91e8c;
+      border: 2px solid #e91e8c; margin-top: 10px;
+      font-size: 14px; padding: 12px;
+    }
+    .tip {
+      margin-top: 20px; font-size: 12px; color: #aaa;
+      text-align: center; line-height: 1.8;
+    }
+    .tip strong { color: #888; }
+    .expiry { font-size: 11px; color: #ccc; text-align:center; margin-top: 12px; }
+    .error-box { text-align:center; padding: 40px 24px; }
+    .error-box .emoji { font-size: 48px; margin-bottom: 16px; }
+    .error-box p { color: #888; font-size: 14px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="logo">📸</div>
+  <div class="brand">PhotoBooth Studio</div>
+  <div class="subtitle">Foto kamu sudah siap didownload!</div>
+
+  <div class="card" id="mainCard">
+    <div class="photo-wrap" id="photoWrap">
+      <div class="skeleton" id="skeleton"></div>
+    </div>
+    <div class="card-body">
+      <div class="photo-id" id="photoId"></div>
+
+      <div class="tabs" id="tabsEl" style="display:none;">
+        <button class="tab-btn active" onclick="switchTab('frame',this)">🖼️ Frame</button>
+        <button class="tab-btn" onclick="switchTab('raw',this)">📷 Foto Asli</button>
+      </div>
+
+      <div id="frameView">
+        <img id="frameImg" src="" alt="Foto Frame" style="display:none; width:100%; border-radius:8px;">
+      </div>
+      <div id="rawView" style="display:none;">
+        <div class="raw-grid" id="rawGrid"></div>
+      </div>
+
+      <a id="btnDownload" class="btn-download" target="_blank">⬇️ Simpan ke HP</a>
+      <button id="btnShare" class="btn-download secondary" onclick="sharePhoto()" style="display:none;">🔗 Bagikan Foto</button>
+
+      <div class="expiry">⏰ Foto tersimpan di cloud</div>
+      <p class="tip">
+        <strong>iOS:</strong> Tekan & tahan foto → "Save to Photos"<br>
+        <strong>Android:</strong> Tekan tombol Simpan di atas
+      </p>
+    </div>
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const photoId  = params.get('id');
+  const frameUrl = params.get('frame');
+  const rawsRaw  = params.get('raws');
+  const rawUrls  = rawsRaw ? rawsRaw.split('|').filter(Boolean) : [];
+
+  function showError() {
+    document.getElementById('mainCard').innerHTML =
+      '<div class="error-box"><div class="emoji">😕</div><p>Foto tidak ditemukan atau link tidak valid.<br><br>Silakan scan QR code baru di mesin photobooth.</p></div>';
+  }
+
+  function loadPhoto() {
+    if (!frameUrl) { showError(); return; }
+
+    document.getElementById('photoId').textContent = photoId ? `ID: ${photoId.toUpperCase()}` : '';
+
+    // Tampilkan foto frame
+    const frameImg = document.getElementById('frameImg');
+    frameImg.src = frameUrl;
+    frameImg.style.display = 'block';
+    frameImg.onload = () => {
+      document.getElementById('skeleton').style.display = 'none';
+      document.getElementById('photoWrap').style.minHeight = 'auto';
+    };
+    frameImg.onerror = showError;
+
+    // Tombol download frame
+    const btn = document.getElementById('btnDownload');
+    btn.href = frameUrl;
+
+    // Foto asli (raw)
+    if (rawUrls.length > 0) {
+      document.getElementById('tabsEl').style.display = 'flex';
+      const grid = document.getElementById('rawGrid');
+      rawUrls.forEach((url, i) => {
+        const img = document.createElement('img');
+        img.src = url; img.alt = `Foto ${i+1}`;
+        grid.appendChild(img);
+      });
+    }
+
+    // Web Share API
+    if (navigator.share) {
+      document.getElementById('btnShare').style.display = 'block';
+    }
+  }
+
+  window.switchTab = function(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('frameView').style.display = tab === 'frame' ? 'block' : 'none';
+    document.getElementById('rawView').style.display   = tab === 'raw'   ? 'block' : 'none';
+    const dlBtn = document.getElementById('btnDownload');
+    dlBtn.href = tab === 'frame' ? frameUrl : (rawUrls[0] || '#');
+    dlBtn.textContent = tab === 'frame' ? '⬇️ Simpan Foto Frame' : '⬇️ Simpan Foto Asli';
+  };
+
+  window.sharePhoto = async function() {
+    try { await navigator.share({ title: 'Foto PhotoBooth Ku! 📸', url: window.location.href }); } catch(e) {}
+  };
+
+  loadPhoto();
+</script>
+</body>
+</html>
