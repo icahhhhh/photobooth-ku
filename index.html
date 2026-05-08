@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PhotoBooth Studio Pro - All in One Capture</title>
+    <!-- Font offline: pastikan folder assets/fonts/ sudah ada. Sementara bisa uncomment baris Google Fonts di bawah -->
+    <link rel="stylesheet" href="assets/fonts/fonts.css">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="custom-prompt" style="display:none; position:fixed; inset:0; background:rgba(17,17,17,0.7); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+  <div style="background:var(--secondary); padding:32px; border-radius:var(--radius-lg); width:90%; max-width:400px; box-shadow:var(--shadow-hover); animation: fadeIn 0.2s ease;">
+    <h3 id="prompt-title" class="display-xl" style="font-size:24px; margin-bottom:16px;">Judul</h3>
+    <input type="text" id="prompt-input" class="form-input" style="margin-bottom:24px; font-size:16px; padding:16px;" autocomplete="off">
+    <div style="display:flex; gap:12px; justify-content:flex-end;">
+      <button class="btn secondary" onclick="closePrompt()" style="border:1px solid var(--hairline); background:transparent; color:var(--primary);">Batal</button>
+      <button class="btn primary" onclick="submitPrompt()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div id="custom-confirm" style="display:none; position:fixed; inset:0; background:rgba(17,17,17,0.7); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+  <div style="background:var(--secondary); padding:32px; border-radius:var(--radius-lg); width:90%; max-width:400px; box-shadow:var(--shadow-hover); animation: fadeIn 0.2s ease; text-align:center;">
+    <h3 id="confirm-title" class="display-xl" style="font-size:24px; margin-bottom:16px;">Konfirmasi</h3>
+    <p id="confirm-msg" style="margin-bottom:24px; font-size:14px; color:rgba(17,17,17,0.6); line-height:1.5;"></p>
+    <div style="display:flex; gap:12px; justify-content:center;">
+      <button class="btn secondary" onclick="closeConfirm()" style="border:1px solid var(--hairline); background:transparent; color:var(--primary);">Batal</button>
+      <button class="btn danger" onclick="submitConfirm()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div id="frame-manager-modal" style="display:none; position:fixed; inset:0; background:rgba(17,17,17,0.7); z-index:3000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+    <div style="background:var(--secondary); padding:32px; border-radius:var(--radius-lg); width:90%; max-width:800px; max-height:80vh; overflow-y:auto; box-shadow:var(--shadow-hover);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h3 class="display-xl" style="font-size:24px;">Daftar Frame Event Ini</h3>
+            <button class="btn secondary" onclick="closeFrameManager()" style="border:1px solid var(--hairline); background:transparent;">Tutup</button>
+        </div>
+        <div id="frame-manager-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:20px;">
+            </div>
+    </div>
+</div>
+
+<div id="admin-ui" class="app">
+
+  <div class="sidebar">
+    <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+    <button class="nav-btn" id="nav-event" onclick="showScreen('event')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="nav-label">Event</span>
+    </button>
+    <button class="nav-btn" id="nav-filter" onclick="showScreen('filter')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="4"/></svg>
+      <span class="nav-label">Beauty</span>
+    </button>
+    <button class="nav-btn" id="nav-home" onclick="showScreen('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span class="nav-label">Layar</span>
+    </button>
+    <button class="nav-btn active" id="nav-layout" onclick="showScreen('layout')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="12" width="8" height="9" rx="1"/><rect x="15" y="12" width="6" height="9" rx="1"/></svg>
+      <span class="nav-label">Layout</span>
+    </button>
+  </div>
+
+  <div class="main">
+
+    <div class="screen" id="screen-filter">
+      <div style="padding: 64px; max-width: 800px; margin: 0 auto;">
+          <h1 class="display-xl" style="font-size: 48px; margin-bottom: 8px;">Beauty Filters</h1>
+          <p style="color: rgba(17,17,17,0.5); margin-bottom: 40px;">Atur pencahayaan dan kehalusan wajah secara real-time.</p>
+          
+          <div style="background: white; padding: 40px; border-radius: 24px; border: 1px solid var(--hairline); display: flex; flex-direction: column; gap: 32px;">
+              <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                      <label class="eyebrow">Brightness</label>
+                      <span id="val-bright" style="font-weight: bold;">100%</span>
+                  </div>
+                  <input type="range" id="filter-bright" min="50" max="150" value="105" oninput="BF.update()">
+              </div>
+              <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                      <label class="eyebrow">Contrast</label>
+                      <span id="val-contrast" style="font-weight: bold;">100%</span>
+                  </div>
+                  <input type="range" id="filter-contrast" min="50" max="150" value="110" oninput="BF.update()">
+              </div>
+              <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                      <label class="eyebrow">Saturation</label>
+                      <span id="val-saturate" style="font-weight: bold;">100%</span>
+                  </div>
+                  <input type="range" id="filter-saturate" min="50" max="150" value="105" oninput="BF.update()">
+              </div>
+              <div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                      <label class="eyebrow">Skin Smoothing (Soft Focus)</label>
+                      <span id="val-smooth" style="font-weight: bold;">1px</span>
+                  </div>
+                  <input type="range" id="filter-smooth" min="0" max="10" step="0.5" value="1" oninput="BF.update()">
+              </div>
+              <div style="padding-top: 16px; border-top: 1px solid var(--hairline); display: flex; gap: 12px;">
+                  <button class="btn secondary" style="flex: 1;" onclick="BF.reset()">Reset Default</button>
+                  <button class="btn primary" style="flex: 1;" onclick="notify('Setting Beauty disimpan!', 'success')">Simpan Pengaturan</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="screen active" id="screen-layout">
+      <div class="layout-screen">
+        <div class="lb-topbar">
+          <div class="display-xl" style="font-size:20px;">Layout Editor</div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn secondary" onclick="LB.resetCanvas()" style="background:transparent; border:1px solid var(--hairline); color:var(--primary);">+ Buat Baru</button>
+            <button class="btn secondary" onclick="openFrameManager()" style="background:var(--surface-soft); border:none; color:var(--primary);">Daftar Frame</button>
+            <button class="btn primary" onclick="saveFrameToEvent()">Simpan Frame</button>
+          </div>
+        </div>
+
+        <div class="lb-mobile-tabs">
+          <button id="tab-btn-setup" onclick="LB.switchTab('setup')">Setup Kertas</button>
+          <button id="tab-btn-props" class="active" onclick="LB.switchTab('props')">Properti & Layer</button>
+        </div>
+        
+        <div class="lb-body">
+          <div class="lb-panel" id="lb-panel-setup">
+            <div>
+              <div class="lb-section-title">Setup Kertas & Print</div>
+              <label class="eyebrow" style="margin-bottom:8px; display:block;">Ukuran Standar</label>
+              <select class="form-input" id="lbPaperSize" onchange="LB.changePaperSize()">
+                <option value="4R">4R (102 × 152 mm)</option>
+                <option value="strip">Photo Strip (2x6 inci)</option>
+                <option value="A4">A4 Print Page</option>
+                <option value="square">Square (1:1)</option>
+                <option value="custom">Kustom Manual</option>
+              </select>
+              
+              <div class="prop-grid" style="margin-top:16px;">
+                <div><label>Lebar (px)</label><input type="number" class="form-input" id="lbCanvasW" value="1200" onchange="LB.applyCustomSize()"></div>
+                <div><label>Tinggi (px)</label><input type="number" class="form-input" id="lbCanvasH" value="1800" onchange="LB.applyCustomSize()"></div>
+              </div>
+
+              <div style="margin-top:20px;">
+                <label class="eyebrow" style="margin-bottom:8px; display:block;">Warna Dasar Kertas</label>
+                <input type="color" id="lbBgColor" value="#ffffff" style="width:100%; height:48px; border:1px solid var(--hairline); cursor:pointer; border-radius:var(--radius-md); overflow:hidden;" onchange="LB.redraw()">
+              </div>
+
+              <button class="btn secondary" style="width:100%; margin-top:32px;" onclick="LB.printCanvas()">Print Preview</button>
+            </div>
+
+            <div style="margin-top:auto; padding-top:24px; border-top:1px solid var(--hairline);">
+              <div class="lb-section-title">Tambah Elemen</div>
+              <button class="btn primary" style="width:100%; margin-bottom:12px;" onclick="LB.addZone()">+ Zona Foto</button>
+              <button class="btn secondary" style="width:100%;" onclick="document.getElementById('lbImageUpload').click()">+ Upload Stiker/Frame</button>
+              <input type="file" id="lbImageUpload" hidden accept="image/*" onchange="LB.addImageLayer(this)">
+            </div>
+          </div>
+
+          <div class="lb-canvas-wrap">
+            <canvas id="layoutCanvas"></canvas>
+          </div>
+
+          <div class="lb-panel mobile-active" id="lb-panel-props">
+            <div>
+              <div class="lb-section-title">Properti Elemen</div>
+              <div id="lbPropEmpty" style="font-size:14px; color:var(--text3); padding:40px 0; text-align:center;">Pilih elemen di layar kanvas.</div>
+              <div id="lbPropPanel" style="display:none; flex-direction:column; gap:16px;">
+                <div class="prop-grid">
+                  <div><label>Posisi X</label><input type="number" class="form-input" id="propX" oninput="LB.updateProps()"></div>
+                  <div><label>Posisi Y</label><input type="number" class="form-input" id="propY" oninput="LB.updateProps()"></div>
+                  <div><label>Lebar</label><input type="number" class="form-input" id="propW" oninput="LB.updateProps()"></div>
+                  <div><label>Tinggi</label><input type="number" class="form-input" id="propH" oninput="LB.updateProps()"></div>
+                </div>
+                <div style="display:flex; gap:12px; margin-top:12px;">
+                  <button class="btn secondary" style="flex:1; padding:10px;" onclick="LB.moveLayerUp()">Ke Atas</button>
+                  <button class="btn secondary" style="flex:1; padding:10px;" onclick="LB.moveLayerDown()">Ke Bawah</button>
+                </div>
+                <button class="btn danger" style="width:100%; margin-top:12px;" onclick="LB.deleteSelected()">Hapus Elemen</button>
+              </div>
+            </div>
+            <div style="margin-top:32px; flex:1; display:flex; flex-direction:column;">
+              <div class="lb-section-title">Urutan Tumpukan</div>
+              <div id="lbLayerList" style="flex:1; overflow-y:auto; min-height:150px; display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-home">
+      <div class="layout-screen">
+        <div class="lb-topbar">
+          <div class="display-xl" style="font-size:20px;">Layar Utama Editor</div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn danger" onclick="HB.deleteFromEvent()" style="background:transparent; border:1px solid #ef4444; color:#ef4444;">Hapus Layar</button>
+            <button class="btn primary" onclick="HB.saveToEvent()">Simpan Layar Kiosk</button>
+          </div>
+        </div>
+        <div class="lb-mobile-tabs">
+          <button id="hb-tab-btn-setup" onclick="HB.switchTab('setup')">Setup Layar</button>
+          <button id="hb-tab-btn-props" class="active" onclick="HB.switchTab('props')">Properti & Layer</button>
+        </div>
+        <div class="lb-body">
+          <div class="lb-panel" id="hb-panel-setup">
+            <div>
+              <div class="lb-section-title">Setup Layar Kiosk</div>
+              <label class="eyebrow" style="margin-bottom:8px; display:block;">Resolusi Monitor</label>
+              <select class="form-input" id="hbScreenSize" onchange="HB.changeScreenSize()">
+                <option value="portrait">Mesin Portrait (1080 × 1920)</option>
+                <option value="landscape">Monitor Landscape (1920 × 1080)</option>
+                <option value="ipad">iPad/Tablet (1536 × 2048)</option>
+                <option value="custom">Kustom Manual</option>
+              </select>
+              <div class="prop-grid" style="margin-top:16px;">
+                <div><label>Lebar (px)</label><input type="number" class="form-input" id="hbCanvasW" value="1080" onchange="HB.applyCustomSize()"></div>
+                <div><label>Tinggi (px)</label><input type="number" class="form-input" id="hbCanvasH" value="1920" onchange="HB.applyCustomSize()"></div>
+              </div>
+              <div style="margin-top:20px;">
+                <label class="eyebrow" style="margin-bottom:8px; display:block;">Warna Dasar Layar</label>
+                <input type="color" id="hbBgColor" value="#fcead1" style="width:100%; height:48px; border:1px solid var(--hairline); cursor:pointer; border-radius:var(--radius-md); overflow:hidden;" onchange="HB.redraw()">
+              </div>
+            </div>
+            <div style="margin-top:auto; border-top:1px solid var(--hairline); padding-top:24px;">
+              <div class="lb-section-title">Tambah Konten</div>
+              <button class="btn secondary" style="width:100%; margin-bottom:12px;" onclick="document.getElementById('hbImageUpload').click()">+ Upload Gambar/Wallpaper</button>
+              <button class="btn primary" style="width:100%;" onclick="HB.addButton()">+ Tombol "MULAI"</button>
+              <input type="file" id="hbImageUpload" hidden accept="image/*" onchange="HB.addImageLayer(this)">
+            </div>
+          </div>
+          <div class="lb-canvas-wrap">
+            <canvas id="homeCanvas"></canvas>
+          </div>
+          <div class="lb-panel mobile-active" id="hb-panel-props">
+            <div>
+              <div class="lb-section-title">Properti Elemen</div>
+              <div id="hbPropEmpty" style="font-size:14px; color:var(--text3); padding:40px 0; text-align:center;">Pilih elemen di layar kanvas.</div>
+              <div id="hbPropPanel" style="display:none; flex-direction:column; gap:16px;">
+                <div class="prop-grid">
+                  <div><label>Posisi X</label><input type="number" class="form-input" id="hbPropX" oninput="HB.updateProps()"></div>
+                  <div><label>Posisi Y</label><input type="number" class="form-input" id="hbPropY" oninput="HB.updateProps()"></div>
+                  <div><label>Lebar</label><input type="number" class="form-input" id="hbPropW" oninput="HB.updateProps()"></div>
+                  <div><label>Tinggi</label><input type="number" class="form-input" id="hbPropH" oninput="HB.updateProps()"></div>
+                </div>
+                <div id="hbButtonProps" style="display:none; margin-top:16px; border-top:1px solid var(--hairline); padding-top:16px;">
+                   <label class="eyebrow" style="display: block; margin-bottom: 8px;">Teks Tombol</label>
+                   <input type="text" class="form-input" id="hbPropText" value="START" oninput="HB.updateProps()">
+                   <div class="prop-grid" style="margin-top:12px;">
+                      <div><label>Warna Tombol</label><input type="color" class="form-input" style="padding:4px; height:40px;" id="hbPropBtnColor" oninput="HB.updateProps()"></div>
+                      <div><label>Warna Teks</label><input type="color" class="form-input" style="padding:4px; height:40px;" id="hbPropTextColor" oninput="HB.updateProps()"></div>
+                   </div>
+                </div>
+                <div style="display:flex; gap:12px; margin-top:12px;">
+                  <button class="btn secondary" style="flex:1; padding:10px;" onclick="HB.moveLayerUp()">Ke Atas</button>
+                  <button class="btn secondary" style="flex:1; padding:10px;" onclick="HB.moveLayerDown()">Ke Bawah</button>
+                </div>
+                <button class="btn danger" style="width:100%; margin-top:12px;" onclick="HB.deleteSelected()">Hapus Elemen</button>
+              </div>
+            </div>
+            <div style="margin-top:32px; flex:1; display:flex; flex-direction:column;">
+              <div class="lb-section-title">Urutan Tumpukan</div>
+              <div id="hbLayerList" style="flex:1; overflow-y:auto; min-height:150px; display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-event">
+      <div class="event-list-container">
+        <h1 class="display-xl" style="font-size:clamp(40px, 5vw, 64px); margin-bottom: 16px; line-height: 1.1;">Event<br>Management</h1>
+        <p style="font-size:16px; color:rgba(17,17,17,0.6); margin-bottom:32px;">Buat event tanpa batas! Kelola frame dan layar khusus setiap acara.</p>
+        
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <button class="btn primary" onclick="createNewEvent()">+ Buat Event Baru</button>
+          <button class="btn accent" onclick="startKioskMode()">🚀 Buka Layar Photobooth</button>
+        </div>
+
+        <div style="margin-top: 32px; padding: 24px; background: var(--secondary); border-radius: var(--radius-lg); border: 1px solid var(--hairline);">
+          <div class="display-xl" style="font-size: 24px; margin-bottom: 16px;">Kamera & Perangkat</div>
+          <label class="eyebrow" style="display: block; margin-bottom: 8px;">Pilih Sumber Kamera</label>
+          <div style="display: flex; gap: 12px; align-items:center; flex-wrap:wrap;">
+            <select id="cameraSelect" class="form-input" style="flex: 1; min-width:200px;"></select>
+            <button class="btn secondary" onclick="refreshCameras()">🔄 Refresh</button>
+            <button class="btn primary" onclick="saveCameraSelection()">Simpan Kamera</button>
+          </div>
+        </div>
+        
+        <div id="eventList"></div>
+      </div>
+    </div>
+
+  </div>
+</div> <div class="kiosk-screen" id="kiosk-attract" onclick="kioskStart()">
+  <canvas id="attractRenderCanvas" style="width:100%; height:100%; object-fit:cover; display:block; background:var(--secondary);"></canvas>
+  <div style="position:absolute; top:0; left:0; width:100px; height:100px; z-index:10; cursor:pointer;" ondblclick="exitKioskMode()"></div>
+</div>
+
+<div class="kiosk-screen" id="kiosk-select" style="background:var(--surface-soft); overflow-y:auto; flex-direction:column;">
+  <div style="padding:60px 40px 40px; text-align:center; flex-shrink:0;">
+     <div class="display-xl" style="font-size:clamp(32px, 6vw, 56px);">Pilih Frame Layout</div>
+     <p style="margin-top:16px; font-size:18px; color:rgba(17,17,17,0.6);">Tekan pada desain untuk mulai berfoto!</p>
+  </div>
+  <div id="kioskContentArea" style="flex:1; display:flex; flex-direction:column; align-items:center;"></div>
+  <div style="position:absolute; top:20px; left:20px; width:100px; height:100px; z-index:10; cursor:pointer;" ondblclick="exitKioskMode()"></div>
+</div>
+
+<div class="live-capture-view" id="liveCaptureView">
+  <video id="lcvVideo" autoplay muted playsinline style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></video>
+  <div id="lcvCountdown" style="position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:10; backdrop-filter:blur(4px);">
+    <div id="lcvCountNum" class="display-xl" style="font-size:clamp(150px, 40vw, 350px); color:white;">3</div>
+  </div>
+  <div id="lcvFlash" style="position:absolute; inset:0; background:#fff; opacity:0; z-index:20; pointer-events:none;"></div>
+  <div id="lcvRecordingDot"></div>
+  <div id="lcvThumbnails"></div>
+</div>
+
+<div class="kiosk-screen" id="kiosk-loading" style="background:var(--surface-soft); align-items:center; justify-content:center; z-index:2100;">
+    <div style="text-align:center; padding:40px;">
+        <div class="display-xl" style="font-size:clamp(40px, 8vw, 64px); margin-bottom:16px;">📸 Memproses Hasil...</div>
+        <p style="font-size:18px; color:rgba(17,17,17,0.6);">Sedang meracik foto terbaik untuk Anda.</p>
+    </div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-container">
+    <div class="result-img-box">
+      <img id="resDisplayImg" style="display:block;">
+      <video id="resDisplayVid" loop autoplay playsinline muted style="display:none;"></video>
+      <div id="resDisplayRawGrid" class="raw-grid" style="display:none;"></div>
+    </div>
+    <div class="result-panel">
+      <h2 class="display-xl" style="margin-bottom:12px; font-size:32px;">Selesai!</h2>
+      <p style="color:rgba(17,17,17,0.6); font-size:14px; margin-bottom:24px; line-height:1.5;">Scan QR Code untuk simpan ke HP.</p>
+      
+      <div class="media-tabs" id="mediaTabsContainer">
+        <button class="media-tab-btn active" id="tab-res-frame" onclick="switchResultTab('frame')">Frame</button>
+        <button class="media-tab-btn" id="tab-res-raw" onclick="switchResultTab('raw')">Asli</button>
+        <button class="media-tab-btn" id="tab-res-gif" onclick="switchResultTab('gif')">GIF</button>
+        <button class="media-tab-btn" id="tab-res-vid" onclick="switchResultTab('vid')">Video</button>
+      </div>
+
+      <div id="qrSimContainer">
+         <p class="display-xl" style="margin-bottom:12px; font-size:18px; color:var(--primary);">Scan untuk Download</p>
+         <img id="qrCodeImg" src="" alt="QR Code">
+      </div>
+      
+      <div class="action-grid">
+        <div class="action-btn" onclick="downloadMedia()">
+          <span style="font-size:28px; margin-bottom:4px;">💾</span> Simpan Lokal
+        </div>
+        <div class="action-btn" onclick="printMedia()" id="btn-print-result">
+          <span style="font-size:28px; margin-bottom:4px;">🖨️</span> Cetak Foto
+        </div>
+      </div>
+
+      <div style="flex:1; min-height:24px;"></div>
+      <button onclick="kioskFinish()" class="btn primary" style="width:100%; padding:20px; font-size:18px; font-weight:800;">✓ KEMBALI KE AWAL</button>
+    </div>
+  </div>
+</div>
+
+<div id="notifStack"></div>
+
+<!-- Urutan WAJIB: qrcode → config → script -->
+<script src="assets/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

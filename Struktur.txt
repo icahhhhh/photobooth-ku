@@ -1,0 +1,12 @@
+Project_Photobooth/
+├── index.html
+├── style.css
+├── script.js
+├── config.js
+├── assets/
+│   ├── frames/
+│   │   ├── frame_wedding_aisyah.png
+│   │   └── frame_event_ultah.png
+│   └── icons/
+│       └── camera-icon.png
+└── photos/           <-- (Tempat simpan hasil foto)
